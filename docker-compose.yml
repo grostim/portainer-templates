@@ -1,0 +1,308 @@
+
+version: '3'
+
+services:
+
+  ombi:
+    image: linuxserver/ombi:latest
+    volumes:
+     - /var/data/volumes/ombi:/config
+     - /dev/log:/dev/log
+    networks:
+     - traefik_public
+     - internal
+    deploy:
+      labels:
+       - "traefik.enable=true"
+       - "traefik.port=3579"
+       - "traefik.frontend.rule=Host:ombi.famillegros.com"
+    environment:
+     - PUID=0
+     - PGID=0
+     - TZ=Europe/Paris
+     
+  sonarr:
+    image: linuxserver/sonarr:latest
+    volumes:
+     - /var/data/volumes/sonarr:/config
+     - /dev/log:/dev/log
+     - /media/gmedia/DlTmp:/downloads
+     - /media/gmedia/DlTmp/:/nzbget
+     - /media/gmedia/DlTmp/Series/:/data/Series
+     - /media/gmedia/Series/:/tv
+    networks:
+     - internal
+    environment:
+     - PUID=0
+     - PGID=0
+     - TZ=Europe/Paris
+     
+  sonarr_proxy:
+    image: a5huynh/oauth2_proxy
+    networks:
+      - internal
+      - traefik_public
+    deploy:
+      labels:
+        - traefik.frontend.rule=Host:sonarr.famillegros.com
+        - traefik.docker.network=traefik_public
+        - traefik.port=4180
+    volumes:
+      - /var/data/volumes/authenticated-emails.txt:/authenticated-emails.txt
+    command: |
+      -cookie-secure=false
+      -upstream=http://sonarr:8989
+      -redirect-url=https://sonarr.famillegros.com
+      -http-address=http://0.0.0.0:4180
+      -email-domain=famillegros.com
+      -provider=google
+      -authenticated-emails-file=/authenticated-emails.txt
+    environment:
+      - OAUTH2_PROXY_CLIENT_ID=414149606396-c16v1j52njif5rpv3nonurjp13mj0d76.apps.googleusercontent.com
+      - OAUTH2_PROXY_CLIENT_SECRET=LPsXpNd9Ul1te-TSE5w9H2g5
+      - OAUTH2_PROXY_COOKIE_SECRET=BgbAkObFPMJSNoVcu68p
+
+  radarr:
+    image: linuxserver/radarr:latest
+    volumes:
+     - /var/data/volumes/radarr:/config
+     - /dev/log:/dev/log
+     - /media/gmedia/DlTmp:/downloads
+     - /media/gmedia/DlTmp/:/nzbget
+     - /media/gmedia/DlTmp/Films/:/data/Films
+     - /media/gmedia/Films/:/movies
+    networks:
+     - internal
+    environment:
+     - PUID=0
+     - PGID=0
+     - TZ=Europe/Paris
+     
+  radarr_proxy:
+    image: a5huynh/oauth2_proxy
+    networks:
+      - internal
+      - traefik_public
+    deploy:
+      labels:
+        - traefik.frontend.rule=Host:radarr.famillegros.com
+        - traefik.docker.network=traefik_public
+        - traefik.port=4180
+    volumes:
+      - /var/data/volumes/authenticated-emails.txt:/authenticated-emails.txt
+    command: |
+      -cookie-secure=false
+      -upstream=http://radarr:7878
+      -redirect-url=https://radarr.famillegros.com
+      -http-address=http://0.0.0.0:4180
+      -email-domain=famillegros.com
+      -provider=google
+      -authenticated-emails-file=/authenticated-emails.txt
+    environment:
+      - OAUTH2_PROXY_CLIENT_ID=414149606396-c16v1j52njif5rpv3nonurjp13mj0d76.apps.googleusercontent.com
+      - OAUTH2_PROXY_CLIENT_SECRET=LPsXpNd9Ul1te-TSE5w9H2g5
+      - OAUTH2_PROXY_COOKIE_SECRET=BgbAkObFPMJSNoVcu68p
+
+  bazarr:
+    image: linuxserver/bazarr:latest
+    volumes:
+     - /var/data/volumes/bazarr:/config
+     - /dev/log:/dev/log
+     - /media/gmedia/Series/:/tv
+     - /media/gmedia/Films/:/movies
+    networks:
+     - internal
+    environment:
+     - PUID=0
+     - PGID=0
+     - TZ=Europe/Paris
+     
+  bazarr_proxy:
+    image: a5huynh/oauth2_proxy
+    networks:
+      - internal
+      - traefik_public
+    deploy:
+      labels:
+        - traefik.frontend.rule=Host:bazarr.famillegros.com
+        - traefik.docker.network=traefik_public
+        - traefik.port=4180
+    volumes:
+      - /var/data/volumes/authenticated-emails.txt:/authenticated-emails.txt
+    command: |
+      -cookie-secure=false
+      -upstream=http://bazarr:6767
+      -redirect-url=https://bazarr.famillegros.com
+      -http-address=http://0.0.0.0:4180
+      -email-domain=famillegros.com
+      -provider=google
+      -authenticated-emails-file=/authenticated-emails.txt
+    environment:
+      - OAUTH2_PROXY_CLIENT_ID=414149606396-c16v1j52njif5rpv3nonurjp13mj0d76.apps.googleusercontent.com
+      - OAUTH2_PROXY_CLIENT_SECRET=LPsXpNd9Ul1te-TSE5w9H2g5
+      - OAUTH2_PROXY_COOKIE_SECRET=BgbAkObFPMJSNoVcu68p
+
+  jackett:
+    image: linuxserver/jackett:latest
+    volumes:
+     - /var/data/volumes/jackett:/config
+     - /dev/log:/dev/log
+     - /media/gmedia/DlTmp/blackhole/:/downloads
+    networks:
+     - internal
+    environment:
+     - PUID=0
+     - PGID=0
+     - TZ=Europe/Paris
+     
+  jackett_proxy:
+    image: a5huynh/oauth2_proxy
+    networks:
+      - internal
+      - traefik_public
+    deploy:
+      labels:
+        - traefik.frontend.rule=Host:jackett.famillegros.com
+        - traefik.docker.network=traefik_public
+        - traefik.port=4180
+    volumes:
+      - /var/data/volumes/authenticated-emails.txt:/authenticated-emails.txt
+    command: |
+      -cookie-secure=false
+      -upstream=http://jackett:9117
+      -redirect-url=https://jackett.famillegros.com
+      -http-address=http://0.0.0.0:4180
+      -email-domain=famillegros.com
+      -provider=google
+      -authenticated-emails-file=/authenticated-emails.txt
+    environment:
+      - OAUTH2_PROXY_CLIENT_ID=414149606396-c16v1j52njif5rpv3nonurjp13mj0d76.apps.googleusercontent.com
+      - OAUTH2_PROXY_CLIENT_SECRET=LPsXpNd9Ul1te-TSE5w9H2g5
+      - OAUTH2_PROXY_COOKIE_SECRET=BgbAkObFPMJSNoVcu68p
+
+  nzbget:
+    image: linuxserver/nzbget:latest
+    volumes:
+     - /var/data/volumes/nzbget:/config
+     - /dev/log:/dev/log
+     - /media/local/DlTmp/:/downloads
+    networks:
+     - internal
+    environment:
+     - PUID=0
+     - PGID=0
+     - TZ=Europe/Paris
+     
+  nzbget_proxy:
+    image: a5huynh/oauth2_proxy
+    networks:
+      - internal
+      - traefik_public
+    deploy:
+      labels:
+        - traefik.frontend.rule=Host:nzbget.famillegros.com
+        - traefik.docker.network=traefik_public
+        - traefik.port=4180
+    volumes:
+      - /var/data/volumes/authenticated-emails.txt:/authenticated-emails.txt
+    command: |
+      -cookie-secure=false
+      -upstream=http://nzbget:6789
+      -redirect-url=https://nzbget.famillegros.com
+      -http-address=http://0.0.0.0:4180
+      -email-domain=famillegros.com
+      -provider=google
+      -authenticated-emails-file=/authenticated-emails.txt
+    environment:
+      - OAUTH2_PROXY_CLIENT_ID=414149606396-c16v1j52njif5rpv3nonurjp13mj0d76.apps.googleusercontent.com
+      - OAUTH2_PROXY_CLIENT_SECRET=LPsXpNd9Ul1te-TSE5w9H2g5
+      - OAUTH2_PROXY_COOKIE_SECRET=BgbAkObFPMJSNoVcu68p
+
+  nzbhydra:
+    image: linuxserver/hydra2:latest
+    volumes:
+     - /var/data/volumes/nzbhydra:/config
+     - /dev/log:/dev/log
+     - /media/gmedia/DlTmp/nzb:/downloads
+    networks:
+     - internal
+    environment:
+     - PUID=0
+     - PGID=0
+     - TZ=Europe/Paris
+     
+  nzbhydra_proxy:
+    image: a5huynh/oauth2_proxy
+    networks:
+      - internal
+      - traefik_public
+    deploy:
+      labels:
+        - traefik.frontend.rule=Host:nzbhydra.famillegros.com
+        - traefik.docker.network=traefik_public
+        - traefik.port=4180
+    volumes:
+      - /var/data/volumes/authenticated-emails.txt:/authenticated-emails.txt
+    command: |
+      -cookie-secure=false
+      -upstream=http://nzbhydra:5076
+      -redirect-url=https://nzbhydra.famillegros.com
+      -http-address=http://0.0.0.0:4180
+      -email-domain=famillegros.com
+      -provider=google
+      -authenticated-emails-file=/authenticated-emails.txt
+    environment:
+      - OAUTH2_PROXY_CLIENT_ID=414149606396-c16v1j52njif5rpv3nonurjp13mj0d76.apps.googleusercontent.com
+      - OAUTH2_PROXY_CLIENT_SECRET=LPsXpNd9Ul1te-TSE5w9H2g5
+      - OAUTH2_PROXY_COOKIE_SECRET=BgbAkObFPMJSNoVcu68p
+
+  transmission:
+    image: linuxserver/transmission:latest
+    volumes:
+     - /var/data/volumes/transmission:/config
+     - /dev/log:/dev/log
+     - /media/local/DlTmp/:/downloads
+    networks:
+     - internal
+    ports:
+     - 9091:9091
+     - 51413:51413
+     - 51413:51413/udp
+    environment:
+     - PUID=0
+     - PGID=0
+     - TZ=Europe/Paris
+     
+  transmission_proxy:
+    image: a5huynh/oauth2_proxy
+    networks:
+      - internal
+      - traefik_public
+    deploy:
+      labels:
+        - traefik.frontend.rule=Host:transmission.famillegros.com
+        - traefik.docker.network=traefik_public
+        - traefik.port=4180
+    volumes:
+      - /var/data/volumes/authenticated-emails.txt:/authenticated-emails.txt
+    command: |
+      -cookie-secure=false
+      -upstream=http://transmission:9091
+      -redirect-url=https://transmission.famillegros.com
+      -http-address=http://0.0.0.0:4180
+      -email-domain=famillegros.com
+      -provider=google
+      -authenticated-emails-file=/authenticated-emails.txt
+    environment:
+      - OAUTH2_PROXY_CLIENT_ID=414149606396-c16v1j52njif5rpv3nonurjp13mj0d76.apps.googleusercontent.com
+      - OAUTH2_PROXY_CLIENT_SECRET=LPsXpNd9Ul1te-TSE5w9H2g5
+      - OAUTH2_PROXY_COOKIE_SECRET=BgbAkObFPMJSNoVcu68p
+
+networks:
+  traefik_public:
+    external: true
+  internal:
+    driver: overlay
+    ipam:
+      config:
+        - subnet: 172.16.11.0/24
