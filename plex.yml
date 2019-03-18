@@ -1,0 +1,76 @@
+version: "3.0"
+
+services:
+  plex:
+    image: linuxserver/plex
+    volumes:
+      - /var/data/volumes/plex:/config
+      - /media/gmedia:/media
+      - /media/gmedia:/data
+      - /media/gmedia:/media/GSuiteCrypt
+    deploy:
+      labels:
+        - traefik.frontend.rule=Host:plex.famillegros.com
+        - traefik.docker.network=traefik_public
+        - traefik.port=32400
+    networks:
+        - traefik_public
+        - internal
+    ports:
+      - 32469:32469
+      - 32400:32400
+      - 32401:32401
+      - 3005:3005
+      - 8324:8324
+      - 1900:1900/udp
+      - 32410:32410/udp
+      - 32412:32412/udp
+      - 32413:32413/udp
+      - 32414:32414/udp
+    environment:
+      - EDGE=1
+      - PUID=0
+      - PGID=0
+      - TZ=Europe/Paris
+      - PLEX_MEDIA_SERVER_USE_SYSLOG=true
+
+  tautulli:
+    image: "linuxserver/tautulli:latest"
+    volumes:
+      - /var/data/volumes/tautulli:/config
+    networks:
+      - internal
+      
+  tautulli-proxy:
+    image: a5huynh/oauth2_proxy
+    networks:
+      - internal
+      - traefik_public
+    deploy:
+      labels:
+        - traefik.frontend.rule=Host:tautulli.famillegros.com
+        - traefik.docker.network=traefik_public
+        - traefik.port=4180
+    volumes:
+      - /var/data/volumes/authenticated-emails.txt:/authenticated-emails.txt
+    command: |
+      -cookie-secure=false
+      -upstream=http://tautulli:8181
+      -redirect-url=https://tautulli.famillegros.com
+      -http-address=http://0.0.0.0:4180
+      -email-domain=famillegros.com
+      -provider=google
+      -authenticated-emails-file=/authenticated-emails.txt
+    environment:
+      - OAUTH2_PROXY_CLIENT_ID=414149606396-c16v1j52njif5rpv3nonurjp13mj0d76.apps.googleusercontent.com
+      - OAUTH2_PROXY_CLIENT_SECRET=LPsXpNd9Ul1te-TSE5w9H2g5
+      - OAUTH2_PROXY_COOKIE_SECRET=BgbAkObFPMJSNoVcu68p
+      
+networks:
+  traefik_public:
+    external: true
+  internal:
+    driver: overlay
+    ipam:
+      config:
+        - subnet: 172.16.16.0/24
