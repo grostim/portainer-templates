@@ -1,0 +1,40 @@
+version: "3.0"
+
+services:
+  unifi:
+    image: linuxserver/unifi-controller:latest
+    volumes:
+      - /var/data/volumes/unifi:/config
+    deploy:
+      labels:
+        - traefik.frontend.rule=Host:unifi.famillegros.com
+        - traefik.docker.network=traefik_public
+        - traefik.port=8443
+        - traefik.protocol=https
+    networks:
+      - traefik_public
+      - internal
+    ports:
+      - 3478:3478/udp
+      - 10001:10001/udp
+      - 8080:8080
+      - 8081:8081
+      - 8443:8443
+      - 8843:8843
+      - 8880:8880
+      - 6789:6789
+    logging:
+      driver: json-file
+    environment:
+      - PGID=0
+      - PUID=0
+      - TZ=Europe/Paris
+
+networks:
+  traefik_public:
+    external: true
+  internal:
+    driver: overlay
+    ipam:
+      config:
+        - subnet: 172.16.7.0/24
