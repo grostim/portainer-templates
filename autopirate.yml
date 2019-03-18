@@ -10,7 +10,6 @@ services:
      - /dev/log:/dev/log
     networks:
      - traefik_public
-     - internal
     deploy:
       labels:
        - "traefik.enable=true"
