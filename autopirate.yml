@@ -15,7 +15,7 @@ services:
       labels:
        - "traefik.enable=true"
        - "traefik.port=3579"
-       - "traefik.frontend.rule=Host:ombi.famillegros.com"
+       - "traefik.frontend.rule=Host:ombi.$DOMAIN"
     environment:
      - PUID=0
      - PGID=0
@@ -44,7 +44,7 @@ services:
       - traefik_public
     deploy:
       labels:
-        - traefik.frontend.rule=Host:sonarr.famillegros.com
+        - traefik.frontend.rule=Host:sonarr.$DOMAIN
         - traefik.docker.network=traefik_public
         - traefik.port=4180
     volumes:
@@ -52,15 +52,15 @@ services:
     command: |
       -cookie-secure=false
       -upstream=http://sonarr:8989
-      -redirect-url=https://sonarr.famillegros.com
+      -redirect-url=https://sonarr.$DOMAIN
       -http-address=http://0.0.0.0:4180
-      -email-domain=famillegros.com
+      -email-domain=$DOMAIN
       -provider=google
       -authenticated-emails-file=/authenticated-emails.txt
     environment:
-      - OAUTH2_PROXY_CLIENT_ID=414149606396-c16v1j52njif5rpv3nonurjp13mj0d76.apps.googleusercontent.com
-      - OAUTH2_PROXY_CLIENT_SECRET=LPsXpNd9Ul1te-TSE5w9H2g5
-      - OAUTH2_PROXY_COOKIE_SECRET=BgbAkObFPMJSNoVcu68p
+      - OAUTH2_PROXY_CLIENT_ID=$OAUTH2_PROXY_CLIENT_ID
+      - OAUTH2_PROXY_CLIENT_SECRET=$OAUTH2_PROXY_CLIENT_SECRET
+      - OAUTH2_PROXY_COOKIE_SECRET=$OAUTH2_PROXY_COOKIE_SECRET
 
   radarr:
     image: linuxserver/radarr:latest
@@ -85,7 +85,7 @@ services:
       - traefik_public
     deploy:
       labels:
-        - traefik.frontend.rule=Host:radarr.famillegros.com
+        - traefik.frontend.rule=Host:radarr.$DOMAIN
         - traefik.docker.network=traefik_public
         - traefik.port=4180
     volumes:
@@ -93,15 +93,15 @@ services:
     command: |
       -cookie-secure=false
       -upstream=http://radarr:7878
-      -redirect-url=https://radarr.famillegros.com
+      -redirect-url=https://radarr.$DOMAIN
       -http-address=http://0.0.0.0:4180
-      -email-domain=famillegros.com
+      -email-domain=$DOMAIN
       -provider=google
       -authenticated-emails-file=/authenticated-emails.txt
     environment:
-      - OAUTH2_PROXY_CLIENT_ID=414149606396-c16v1j52njif5rpv3nonurjp13mj0d76.apps.googleusercontent.com
-      - OAUTH2_PROXY_CLIENT_SECRET=LPsXpNd9Ul1te-TSE5w9H2g5
-      - OAUTH2_PROXY_COOKIE_SECRET=BgbAkObFPMJSNoVcu68p
+      - OAUTH2_PROXY_CLIENT_ID=$OAUTH2_PROXY_CLIENT_ID
+      - OAUTH2_PROXY_CLIENT_SECRET=$OAUTH2_PROXY_CLIENT_SECRET
+      - OAUTH2_PROXY_COOKIE_SECRET=$OAUTH2_PROXY_COOKIE_SECRET
 
   bazarr:
     image: linuxserver/bazarr:latest
@@ -124,7 +124,7 @@ services:
       - traefik_public
     deploy:
       labels:
-        - traefik.frontend.rule=Host:bazarr.famillegros.com
+        - traefik.frontend.rule=Host:bazarr.$DOMAIN
         - traefik.docker.network=traefik_public
         - traefik.port=4180
     volumes:
@@ -132,15 +132,15 @@ services:
     command: |
       -cookie-secure=false
       -upstream=http://bazarr:6767
-      -redirect-url=https://bazarr.famillegros.com
+      -redirect-url=https://bazarr.$DOMAIN
       -http-address=http://0.0.0.0:4180
-      -email-domain=famillegros.com
+      -email-domain=$DOMAIN
       -provider=google
       -authenticated-emails-file=/authenticated-emails.txt
     environment:
-      - OAUTH2_PROXY_CLIENT_ID=414149606396-c16v1j52njif5rpv3nonurjp13mj0d76.apps.googleusercontent.com
-      - OAUTH2_PROXY_CLIENT_SECRET=LPsXpNd9Ul1te-TSE5w9H2g5
-      - OAUTH2_PROXY_COOKIE_SECRET=BgbAkObFPMJSNoVcu68p
+      - OAUTH2_PROXY_CLIENT_ID=$OAUTH2_PROXY_CLIENT_ID
+      - OAUTH2_PROXY_CLIENT_SECRET=$OAUTH2_PROXY_CLIENT_SECRET
+      - OAUTH2_PROXY_COOKIE_SECRET=$OAUTH2_PROXY_COOKIE_SECRET
 
   jackett:
     image: linuxserver/jackett:latest
@@ -162,7 +162,7 @@ services:
       - traefik_public
     deploy:
       labels:
-        - traefik.frontend.rule=Host:jackett.famillegros.com
+        - traefik.frontend.rule=Host:jackett.$DOMAIN
         - traefik.docker.network=traefik_public
         - traefik.port=4180
     volumes:
@@ -170,15 +170,15 @@ services:
     command: |
       -cookie-secure=false
       -upstream=http://jackett:9117
-      -redirect-url=https://jackett.famillegros.com
+      -redirect-url=https://jackett.$DOMAIN
       -http-address=http://0.0.0.0:4180
-      -email-domain=famillegros.com
+      -email-domain=$DOMAIN
       -provider=google
       -authenticated-emails-file=/authenticated-emails.txt
     environment:
-      - OAUTH2_PROXY_CLIENT_ID=414149606396-c16v1j52njif5rpv3nonurjp13mj0d76.apps.googleusercontent.com
-      - OAUTH2_PROXY_CLIENT_SECRET=LPsXpNd9Ul1te-TSE5w9H2g5
-      - OAUTH2_PROXY_COOKIE_SECRET=BgbAkObFPMJSNoVcu68p
+      - OAUTH2_PROXY_CLIENT_ID=$OAUTH2_PROXY_CLIENT_ID
+      - OAUTH2_PROXY_CLIENT_SECRET=$OAUTH2_PROXY_CLIENT_SECRET
+      - OAUTH2_PROXY_COOKIE_SECRET=$OAUTH2_PROXY_COOKIE_SECRET
 
   nzbget:
     image: linuxserver/nzbget:latest
@@ -200,7 +200,7 @@ services:
       - traefik_public
     deploy:
       labels:
-        - traefik.frontend.rule=Host:nzbget.famillegros.com
+        - traefik.frontend.rule=Host:nzbget.$DOMAIN
         - traefik.docker.network=traefik_public
         - traefik.port=4180
     volumes:
@@ -208,15 +208,15 @@ services:
     command: |
       -cookie-secure=false
       -upstream=http://nzbget:6789
-      -redirect-url=https://nzbget.famillegros.com
+      -redirect-url=https://nzbget.$DOMAIN
       -http-address=http://0.0.0.0:4180
-      -email-domain=famillegros.com
+      -email-domain=$DOMAIN
       -provider=google
       -authenticated-emails-file=/authenticated-emails.txt
     environment:
-      - OAUTH2_PROXY_CLIENT_ID=414149606396-c16v1j52njif5rpv3nonurjp13mj0d76.apps.googleusercontent.com
-      - OAUTH2_PROXY_CLIENT_SECRET=LPsXpNd9Ul1te-TSE5w9H2g5
-      - OAUTH2_PROXY_COOKIE_SECRET=BgbAkObFPMJSNoVcu68p
+      - OAUTH2_PROXY_CLIENT_ID=$OAUTH2_PROXY_CLIENT_ID
+      - OAUTH2_PROXY_CLIENT_SECRET=$OAUTH2_PROXY_CLIENT_SECRET
+      - OAUTH2_PROXY_COOKIE_SECRET=$OAUTH2_PROXY_COOKIE_SECRET
 
   nzbhydra:
     image: linuxserver/hydra2:latest
@@ -238,7 +238,7 @@ services:
       - traefik_public
     deploy:
       labels:
-        - traefik.frontend.rule=Host:nzbhydra.famillegros.com
+        - traefik.frontend.rule=Host:nzbhydra.$DOMAIN
         - traefik.docker.network=traefik_public
         - traefik.port=4180
     volumes:
@@ -246,15 +246,15 @@ services:
     command: |
       -cookie-secure=false
       -upstream=http://nzbhydra:5076
-      -redirect-url=https://nzbhydra.famillegros.com
+      -redirect-url=https://nzbhydra.$DOMAIN
       -http-address=http://0.0.0.0:4180
-      -email-domain=famillegros.com
+      -email-domain=$DOMAIN
       -provider=google
       -authenticated-emails-file=/authenticated-emails.txt
     environment:
-      - OAUTH2_PROXY_CLIENT_ID=414149606396-c16v1j52njif5rpv3nonurjp13mj0d76.apps.googleusercontent.com
-      - OAUTH2_PROXY_CLIENT_SECRET=LPsXpNd9Ul1te-TSE5w9H2g5
-      - OAUTH2_PROXY_COOKIE_SECRET=BgbAkObFPMJSNoVcu68p
+      - OAUTH2_PROXY_CLIENT_ID=$OAUTH2_PROXY_CLIENT_ID
+      - OAUTH2_PROXY_CLIENT_SECRET=$OAUTH2_PROXY_CLIENT_SECRET
+      - OAUTH2_PROXY_COOKIE_SECRET=$OAUTH2_PROXY_COOKIE_SECRET
 
   transmission:
     image: linuxserver/transmission:latest
@@ -280,7 +280,7 @@ services:
       - traefik_public
     deploy:
       labels:
-        - traefik.frontend.rule=Host:transmission.famillegros.com
+        - traefik.frontend.rule=Host:transmission.$DOMAIN
         - traefik.docker.network=traefik_public
         - traefik.port=4180
     volumes:
@@ -288,15 +288,15 @@ services:
     command: |
       -cookie-secure=false
       -upstream=http://transmission:9091
-      -redirect-url=https://transmission.famillegros.com
+      -redirect-url=https://transmission.$DOMAIN
       -http-address=http://0.0.0.0:4180
-      -email-domain=famillegros.com
+      -email-domain=$DOMAIN
       -provider=google
       -authenticated-emails-file=/authenticated-emails.txt
     environment:
-      - OAUTH2_PROXY_CLIENT_ID=414149606396-c16v1j52njif5rpv3nonurjp13mj0d76.apps.googleusercontent.com
-      - OAUTH2_PROXY_CLIENT_SECRET=LPsXpNd9Ul1te-TSE5w9H2g5
-      - OAUTH2_PROXY_COOKIE_SECRET=BgbAkObFPMJSNoVcu68p
+      - OAUTH2_PROXY_CLIENT_ID=$OAUTH2_PROXY_CLIENT_ID
+      - OAUTH2_PROXY_CLIENT_SECRET=$OAUTH2_PROXY_CLIENT_SECRET
+      - OAUTH2_PROXY_COOKIE_SECRET=$OAUTH2_PROXY_COOKIE_SECRET
 
 networks:
   traefik_public:
