@@ -18,8 +18,8 @@ services:
        - "traefik.port=3579"
        - "traefik.frontend.rule=Host:ombi.$DOMAIN"
     environment:
-     - PUID=0
-     - PGID=0
+     - PUID=$PUID
+     - PGID=$PGID
      - TZ=Europe/Paris
      
   sonarr:
@@ -34,8 +34,8 @@ services:
     networks:
      - internal
     environment:
-     - PUID=0
-     - PGID=0
+     - PUID=$PUID
+     - PGID=$PGID
      - TZ=Europe/Paris
      
   sonarr_proxy:
@@ -75,8 +75,8 @@ services:
     networks:
      - internal
     environment:
-     - PUID=0
-     - PGID=0
+     - PUID=$PUID
+     - PGID=$PGID
      - TZ=Europe/Paris
      
   radarr_proxy:
@@ -114,8 +114,8 @@ services:
     networks:
      - internal
     environment:
-     - PUID=0
-     - PGID=0
+     - PUID=$PUID
+     - PGID=$PGID
      - TZ=Europe/Paris
      
   bazarr_proxy:
@@ -152,8 +152,8 @@ services:
     networks:
      - internal
     environment:
-     - PUID=0
-     - PGID=0
+     - PUID=$PUID
+     - PGID=$PGID
      - TZ=Europe/Paris
      
   jackett_proxy:
@@ -190,8 +190,8 @@ services:
     networks:
      - internal
     environment:
-     - PUID=0
-     - PGID=0
+     - PUID=$PUID
+     - PGID=$PGID
      - TZ=Europe/Paris
      
   nzbget_proxy:
@@ -228,8 +228,8 @@ services:
     networks:
      - internal
     environment:
-     - PUID=0
-     - PGID=0
+     - PUID=$PUID
+     - PGID=$PGID
      - TZ=Europe/Paris
      
   nzbhydra_proxy:
@@ -270,8 +270,8 @@ services:
      - 51413:51413
      - 51413:51413/udp
     environment:
-     - PUID=0
-     - PGID=0
+     - PUID=$PUID
+     - PGID=$PGID
      - TZ=Europe/Paris
      
   transmission_proxy:
