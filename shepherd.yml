@@ -1,0 +1,20 @@
+version: "3"
+
+services:
+  shepherd:
+    image: mazzolino/shepherd
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    labels:
+      - "traefik.enable=false"
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+
+  docker-cleanup:
+    image: meltwater/docker-cleanup:latest
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/lib/docker:/var/lib/docker
+    deploy:
+      mode: global
