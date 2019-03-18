@@ -10,9 +10,11 @@ services:
      - /dev/log:/dev/log
     networks:
      - traefik_public
+     - internal
     deploy:
       labels:
        - "traefik.enable=true"
+       - "traefik.docker.network=traefik_public"
        - "traefik.port=3579"
        - "traefik.frontend.rule=Host:ombi.$DOMAIN"
     environment:
