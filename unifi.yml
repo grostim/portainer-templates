@@ -1,3 +1,14 @@
+## This docker-compose file is designed to be used as a template in portainer.
+## It is widely (completely) inspired from the funkypenguin's cookbook.
+## Don't miss his webpage: https://geek-cookbook.funkypenguin.co.nz
+##
+##
+## This template can be set up in your portainer "App template".
+## Don't forget to set the following environment variables:
+## - PUID => user id that can read/write the media files.
+## - PGID => group id that can read/write the media files.
+## - DOMAIN => your DNS domainname ( example.com )
+
 version: "3.0"
 
 services:
@@ -7,7 +18,7 @@ services:
       - /var/data/volumes/unifi:/config
     deploy:
       labels:
-        - traefik.frontend.rule=Host:unifi.famillegros.com
+        - traefik.frontend.rule=Host:unifi.$DOMAIN
         - traefik.docker.network=traefik_public
         - traefik.port=8443
         - traefik.protocol=https
@@ -23,11 +34,9 @@ services:
       - 8843:8843
       - 8880:8880
       - 6789:6789
-    logging:
-      driver: json-file
     environment:
-      - PGID=0
-      - PUID=0
+      - PGID=$PGID
+      - PUID=$PUID
       - TZ=Europe/Paris
 
 networks:
