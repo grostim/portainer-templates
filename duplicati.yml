@@ -41,7 +41,7 @@ services:
       - /var/data/volumes/authenticated-emails.txt:/authenticated-emails.txt
     command: |
       -cookie-secure=false
-      -upstream=http://duplicati:80
+      -upstream=http://duplicati:8200
       -redirect-url=https://duplicati.$DOMAIN
       -http-address=http://0.0.0.0:4180
       -email-domain=$DOMAIN
