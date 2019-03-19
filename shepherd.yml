@@ -1,3 +1,9 @@
+## This docker-compose file is designed to be used as a template in portainer.
+## It is widely (completely) inspired from the funkypenguin's cookbook.
+## Don't miss his webpage: https://geek-cookbook.funkypenguin.co.nz
+##
+##
+## This template can be set up in your portainer "App template".
 version: "3"
 
 services:
