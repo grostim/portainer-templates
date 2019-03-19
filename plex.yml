@@ -1,3 +1,17 @@
+## This docker-compose file is designed to be used as a template in portainer.
+## It is widely (completely) inspired from the funkypenguin's cookbook.
+## Don't miss his webpage: https://geek-cookbook.funkypenguin.co.nz
+##
+##
+## This template can be set up in your portainer "App template".
+## Don't forget to set the following environment variables:
+## - PUID => user id that can read/write the media files.
+## - PGID => group id that can read/write the media files.
+## - DOMAIN => your DNS domainname ( example.com )
+## - OAUTH2_PROXY_CLIENT_ID => please see https://github.com/bitly/oauth2_proxy
+## - OAUTH2_PROXY_CLIENT_SECRET => please see https://github.com/bitly/oauth2_proxy
+## - OAUTH2_PROXY_COOKIE_SECRET => Some random long string
+
 version: "3.0"
 
 services:
@@ -10,7 +24,7 @@ services:
       - /media/gmedia:/media/GSuiteCrypt
     deploy:
       labels:
-        - traefik.frontend.rule=Host:plex.famillegros.com
+        - traefik.frontend.rule=Host:plex.$DOMAIN
         - traefik.docker.network=traefik_public
         - traefik.port=32400
     networks:
@@ -29,8 +43,8 @@ services:
       - 32414:32414/udp
     environment:
       - EDGE=1
-      - PUID=0
-      - PGID=0
+      - PUID=$PUID
+      - PGID=$PGID
       - TZ=Europe/Paris
       - PLEX_MEDIA_SERVER_USE_SYSLOG=true
 
@@ -48,7 +62,7 @@ services:
       - traefik_public
     deploy:
       labels:
-        - traefik.frontend.rule=Host:tautulli.famillegros.com
+        - traefik.frontend.rule=Host:tautulli.$DOMAIN
         - traefik.docker.network=traefik_public
         - traefik.port=4180
     volumes:
@@ -56,15 +70,15 @@ services:
     command: |
       -cookie-secure=false
       -upstream=http://tautulli:8181
-      -redirect-url=https://tautulli.famillegros.com
+      -redirect-url=https://tautulli.$DOMAIN
       -http-address=http://0.0.0.0:4180
-      -email-domain=famillegros.com
+      -email-domain=$DOMAIN
       -provider=google
       -authenticated-emails-file=/authenticated-emails.txt
     environment:
-      - OAUTH2_PROXY_CLIENT_ID=414149606396-c16v1j52njif5rpv3nonurjp13mj0d76.apps.googleusercontent.com
-      - OAUTH2_PROXY_CLIENT_SECRET=LPsXpNd9Ul1te-TSE5w9H2g5
-      - OAUTH2_PROXY_COOKIE_SECRET=BgbAkObFPMJSNoVcu68p
+      - OAUTH2_PROXY_CLIENT_ID=$OAUTH2_PROXY_CLIENT_ID
+      - OAUTH2_PROXY_CLIENT_SECRET=$OAUTH2_PROXY_CLIENT_SECRET
+      - OAUTH2_PROXY_COOKIE_SECRET=$OAUTH2_PROXY_COOKIE_SECRET
       
 networks:
   traefik_public:
