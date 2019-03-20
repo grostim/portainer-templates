@@ -270,39 +270,38 @@ services:
       - OAUTH2_PROXY_CLIENT_SECRET=$OAUTH2_PROXY_CLIENT_SECRET
       - OAUTH2_PROXY_COOKIE_SECRET=$OAUTH2_PROXY_COOKIE_SECRET
 
-  transmission:
-    image: linuxserver/transmission:latest
+  rtorrent:
+    image: linuxserver/rutorrent:latest
     volumes:
-     - /var/data/volumes/transmission:/config
+     - /var/data/volumes/rtorrent:/config
      - /dev/log:/dev/log
      - /media/local/DlTmp/:/downloads
     networks:
      - internal
     ports:
-#     - 9091:9091
      - 51413:51413
      - 51413:51413/udp
     environment:
-     - PUID=$PUID
-     - PGID=$PGID
+     - PUID=1000
+     - PGID=110
      - TZ=Europe/Paris
      
-  transmission_proxy:
+  rtorrent_proxy:
     image: a5huynh/oauth2_proxy
     networks:
       - internal
       - traefik_public
     deploy:
       labels:
-        - traefik.frontend.rule=Host:transmission.$DOMAIN
+        - traefik.frontend.rule=Host:rtorrent.$DOMAIN
         - traefik.docker.network=traefik_public
         - traefik.port=4180
     volumes:
       - /var/data/volumes/authenticated-emails.txt:/authenticated-emails.txt
     command: |
       -cookie-secure=false
-      -upstream=http://transmission:9091
-      -redirect-url=https://transmission.$DOMAIN
+      -upstream=http://rtorrent:80
+      -redirect-url=https://rtorrent.$DOMAIN
       -http-address=http://0.0.0.0:4180
       -email-domain=$DOMAIN
       -provider=google
