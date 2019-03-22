@@ -40,7 +40,7 @@ services:
       -http-address=http://0.0.0.0:4180
       -email-domain=$DOMAIN
       -provider=google
-      -authenticated-emails-file=/authenticated-emails.txt
+      -authenticated-emails-file=/authenticated-emails-h5ai.txt
     environment:
       - OAUTH2_PROXY_CLIENT_ID=$OAUTH2_PROXY_CLIENT_ID
       - OAUTH2_PROXY_CLIENT_SECRET=$OAUTH2_PROXY_CLIENT_SECRET
