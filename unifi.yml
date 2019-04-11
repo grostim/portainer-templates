@@ -38,6 +38,8 @@ services:
       - PGID=$PGID
       - PUID=$PUID
       - TZ=Europe/Paris
+    logging:
+      driver: json-file
 
 networks:
   traefik_public:
