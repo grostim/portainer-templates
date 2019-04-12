@@ -324,7 +324,7 @@ lazylibrarian:
   networks:
   - internal
   
-  lazylibrarian_proxy:
+lazylibrarian_proxy:
   image: a5huynh/oauth2_proxy
   networks:
     - internal
