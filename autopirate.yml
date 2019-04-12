@@ -321,6 +321,7 @@ services:
     volumes:
      - /var/data/volumes/lazylibrarian:/config
      - /media/gmedia/Books:/media
+     - /media/local/DlTmp/:/downloads
     networks:
      - internal
   
