@@ -325,29 +325,29 @@ lazylibrarian:
   - internal
   
   lazylibrarian_proxy:
-    image: a5huynh/oauth2_proxy
-    networks:
-      - internal
-      - traefik_public
-    deploy:
-      labels:
-        - traefik.frontend.rule=Host:lazylibrarian.$DOMAIN
-        - traefik.docker.network=traefik_public
-        - traefik.port=4180
-    volumes:
-      - /var/data/volumes/authenticated-emails.txt:/authenticated-emails.txt
-    command: |
-      -cookie-secure=false
-      -upstream=http://lazylibrarian:80
-      -redirect-url=https://lazylibrarian.$DOMAIN
-      -http-address=http://0.0.0.0:4180
-      -email-domain=$DOMAIN
-      -provider=google
-      -authenticated-emails-file=/authenticated-emails.txt
-    environment:
-      - OAUTH2_PROXY_CLIENT_ID=$OAUTH2_PROXY_CLIENT_ID
-      - OAUTH2_PROXY_CLIENT_SECRET=$OAUTH2_PROXY_CLIENT_SECRET
-      - OAUTH2_PROXY_COOKIE_SECRET=$OAUTH2_PROXY_COOKIE_SECRET
+  image: a5huynh/oauth2_proxy
+  networks:
+    - internal
+    - traefik_public
+  deploy:
+    labels:
+      - traefik.frontend.rule=Host:lazylibrarian.$DOMAIN
+      - traefik.docker.network=traefik_public
+      - traefik.port=4180
+  volumes:
+    - /var/data/volumes/authenticated-emails.txt:/authenticated-emails.txt
+  command: |
+    -cookie-secure=false
+    -upstream=http://lazylibrarian:80
+    -redirect-url=https://lazylibrarian.$DOMAIN
+    -http-address=http://0.0.0.0:4180
+    -email-domain=$DOMAIN
+    -provider=google
+    -authenticated-emails-file=/authenticated-emails.txt
+  environment:
+     - OAUTH2_PROXY_CLIENT_ID=$OAUTH2_PROXY_CLIENT_ID
+     - OAUTH2_PROXY_CLIENT_SECRET=$OAUTH2_PROXY_CLIENT_SECRET
+     - OAUTH2_PROXY_COOKIE_SECRET=$OAUTH2_PROXY_COOKIE_SECRET
 
 networks:
   traefik_public:
