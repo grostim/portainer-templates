@@ -338,7 +338,7 @@ services:
       - /var/data/volumes/authenticated-emails.txt:/authenticated-emails.txt
     command: |
       -cookie-secure=false
-      -upstream=http://lazylibrarian:80
+      -upstream=http://lazylibrarian:5299
       -redirect-url=https://lazylibrarian.$DOMAIN
       -http-address=http://0.0.0.0:4180
       -email-domain=$DOMAIN
