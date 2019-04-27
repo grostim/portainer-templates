@@ -324,7 +324,7 @@ services:
      - /media/local/DlTmp/:/downloads
     networks:
      - internal
-  
+
   lazylibrarian_proxy:
     image: a5huynh/oauth2_proxy
     networks:
@@ -369,25 +369,54 @@ services:
      - LC_ALL=fr_FR.UTF-8
     networks:
      - internal
+     - traefik_public
+    logging:
+      driver: "json-file"
+    deploy:
+      labels:
+       - "traefik.enable=true"
+       - "traefik.docker.network=traefik_public"
+       - "traefik.port=8083"
+       - "traefik.frontend.rule=Host:calibre.$DOMAIN"
+
+  calibre-server:
+    image: cgspeck/docker-rdp-calibre
+    volumes:
+     - /media/Books:/books
+     - /var/data/volumes/calibre-server:/config
+     - /media/gmedia/DlTmp/BooksImport:/autoimport
+    ports:
+     - 18080:8080
+     - 18081:8081
+     - 3389:3389
+    environment:
+     - USER_ID=1000
+     - GROUP_ID=1000
+     - EDGE=1 #Mise à jour à chaque démarrage
+     - WIDTH=1280
+     - HEIGHT=720
+     - TZ=Europe/Paris
+    networks:
+     - internal
     logging:
       driver: "json-file"
 
-  calibre-web_proxy:
+  calibre-server_proxy:
     image: a5huynh/oauth2_proxy
     networks:
       - internal
       - traefik_public
     deploy:
       labels:
-        - traefik.frontend.rule=Host:calibre.$DOMAIN
+        - traefik.frontend.rule=Host:calibre-server.$DOMAIN
         - traefik.docker.network=traefik_public
         - traefik.port=4180
     volumes:
       - /var/data/volumes/authenticated-emails.txt:/authenticated-emails.txt
     command: |
       -cookie-secure=false
-      -upstream=http://calibre-web:8083
-      -redirect-url=https://calibre.$DOMAIN
+      -upstream=http://calibre-server:8080
+      -redirect-url=https://calibre-server.$DOMAIN
       -http-address=http://0.0.0.0:4180
       -email-domain=$DOMAIN
       -provider=google
