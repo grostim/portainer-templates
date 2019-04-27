@@ -349,6 +349,55 @@ services:
       - OAUTH2_PROXY_CLIENT_ID=$OAUTH2_PROXY_CLIENT_ID
       - OAUTH2_PROXY_CLIENT_SECRET=$OAUTH2_PROXY_CLIENT_SECRET
       - OAUTH2_PROXY_COOKIE_SECRET=$OAUTH2_PROXY_COOKIE_SECRET
+    logging:
+      driver: "json-file"
+      
+  calibre-web:
+    image: technosoft2000/calibre-web
+    volumes:
+     - /media/Books:/books
+     - /var/data/volumes/calibre-web:/calibre-web/config
+    environment:
+     - PUID=1000
+     - PGID=1000
+     - USE_CONFIG_DIR=true
+     - SET_CONTAINER_TIMEZONE=true
+     - CONTAINER_TIMEZONE=Europe/Paris
+     - TZ=Europe/Paris
+     - LANG=fr_FR.UTF-8
+     - LANGUAGE=fr_FR.UTF-8
+     - LC_ALL=fr_FR.UTF-8
+    networks:
+     - internal
+    logging:
+      driver: "json-file"
+
+  calibre-web_proxy:
+    image: a5huynh/oauth2_proxy
+    networks:
+      - internal
+      - traefik_public
+    deploy:
+      labels:
+        - traefik.frontend.rule=Host:calibre.$DOMAIN
+        - traefik.docker.network=traefik_public
+        - traefik.port=4180
+    volumes:
+      - /var/data/volumes/authenticated-emails.txt:/authenticated-emails.txt
+    command: |
+      -cookie-secure=false
+      -upstream=http://calibre-web:8083
+      -redirect-url=https://calibre.$DOMAIN
+      -http-address=http://0.0.0.0:4180
+      -email-domain=$DOMAIN
+      -provider=google
+      -authenticated-emails-file=/authenticated-emails.txt
+    environment:
+      - OAUTH2_PROXY_CLIENT_ID=$OAUTH2_PROXY_CLIENT_ID
+      - OAUTH2_PROXY_CLIENT_SECRET=$OAUTH2_PROXY_CLIENT_SECRET
+      - OAUTH2_PROXY_COOKIE_SECRET=$OAUTH2_PROXY_COOKIE_SECRET
+    logging:
+      driver: "json-file"
 
 networks:
   traefik_public:
