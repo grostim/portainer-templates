@@ -320,8 +320,10 @@ services:
      - TZ=Europe/Paris
     volumes:
      - /var/data/volumes/lazylibrarian:/config
-     - /media/gmedia/Books:/media
+     - /media/gmedia/Books:/books
      - /media/local/DlTmp/:/downloads
+     - /media/gmedia/DlTmp/BooksImport:/autoimport
+     - /media/Books:/calibreFolder
     networks:
      - internal
 
