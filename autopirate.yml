@@ -36,7 +36,7 @@ services:
      - TZ=Europe/Paris
      
   sonarr:
-    image: linuxserver/sonarr:latest
+    image: lsiodev/sonarr-preview:latest
     volumes:
      - /var/data/volumes/sonarr:/config
      - /dev/log:/dev/log
@@ -313,17 +313,19 @@ services:
 
 
   lazylibrarian:
-    image: linuxserver/lazylibrarian:latest
+    image: thraxis/lazylibrarian-calibre:latest
     environment:
      - PUID=$PUID
      - PGID=$PGID
      - TZ=Europe/Paris
     volumes:
-     - /var/data/volumes/lazylibrarian:/config
-     - /media/gmedia/Books:/books
+#     - /var/data/volumes/lazylibrarian:/config
+     - /var/data/volumes/lazylibrarian-thraxis:/config
+#     - /media/gmedia/Books:/books
+     - /var/data/volumes/Calibre-lib:/books
      - /media/local/DlTmp/:/downloads
      - /media/gmedia/DlTmp/BooksImport:/autoimport
-     - /media/Books:/calibreFolder
+#     - /media/Books:/calibreFolder
     networks:
      - internal
 
@@ -351,13 +353,11 @@ services:
       - OAUTH2_PROXY_CLIENT_ID=$OAUTH2_PROXY_CLIENT_ID
       - OAUTH2_PROXY_CLIENT_SECRET=$OAUTH2_PROXY_CLIENT_SECRET
       - OAUTH2_PROXY_COOKIE_SECRET=$OAUTH2_PROXY_COOKIE_SECRET
-    logging:
-      driver: "json-file"
       
   calibre-web:
     image: technosoft2000/calibre-web
     volumes:
-     - /media/Books:/books
+     - /var/data/volumes/Calibre-lib:/books
      - /var/data/volumes/calibre-web:/calibre-web/config
     environment:
      - PUID=1000
@@ -372,8 +372,6 @@ services:
     networks:
      - internal
      - traefik_public
-    logging:
-      driver: "json-file"
     deploy:
       labels:
        - "traefik.enable=true"
@@ -384,8 +382,7 @@ services:
   calibre-server:
     image: cgspeck/docker-rdp-calibre
     volumes:
-     - /media/Books:/books
-     - /var/data/volumes/calibre-server:/config
+     - /var/data/volumes/Calibre-lib:/config
      - /media/gmedia/DlTmp/BooksImport:/autoimport
     ports:
      - 18080:8080
@@ -400,8 +397,6 @@ services:
      - TZ=Europe/Paris
     networks:
      - internal
-    logging:
-      driver: "json-file"
 
   calibre-server_proxy:
     image: a5huynh/oauth2_proxy
@@ -427,8 +422,6 @@ services:
       - OAUTH2_PROXY_CLIENT_ID=$OAUTH2_PROXY_CLIENT_ID
       - OAUTH2_PROXY_CLIENT_SECRET=$OAUTH2_PROXY_CLIENT_SECRET
       - OAUTH2_PROXY_COOKIE_SECRET=$OAUTH2_PROXY_COOKIE_SECRET
-    logging:
-      driver: "json-file"
 
 networks:
   traefik_public:
