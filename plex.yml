@@ -42,6 +42,7 @@ services:
       - 32413:32413/udp
       - 32414:32414/udp
     environment:
+      - VERSION = latest
       - EDGE=1
       - PUID=$PUID
       - PGID=$PGID
