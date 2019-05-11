@@ -16,9 +16,8 @@ services:
   duplicati:
     image: linuxserver/duplicati:latest
     volumes:
-     - /dev/log:/dev/log
      - /var/data/volumes/duplicati:/config
-     - /tmp/backups:/backups
+     - /var/data/volumes/duplicatibackup:/backups
      - /:/source:ro
     deploy:
     networks:
