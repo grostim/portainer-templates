@@ -1,0 +1,47 @@
+## This docker-compose file is designed to be used as a template in portainer.
+## It is widely (completely) inspired from the funkypenguin's cookbook.
+## Don't miss his webpage: https://geek-cookbook.funkypenguin.co.nz
+##
+##
+## This template can be set up in your portainer "App template".
+## Don't forget to set the following environment variables:
+## - DOMAIN => your DNS domainname ( example.com )
+## - MYDIR => the directory where you store permanent data for your stacks
+## - ADMIN_TOKEN => A long random string that is used as a password to secure admin access
+## - SMTPHOST => your smtp server
+## - SMTPFROM => the sender mail address
+## - SMTPPORT => your smtp server port
+
+version: "3"
+services:
+  bitwarden:
+    image: mprasil/bitwarden
+    environment:
+      - DOMAIN=https://bitwarden.$DOMAIN #Définition du domaine requise pour U2F
+      - SIGNUPS_ALLOWED=false #Desactive la possibilité de s'inscrire
+      - INVITATIONS_ALLOWED=true #Autorise la possibilité d'inviter qqun
+      - ADMIN_TOKEN=$ADMIN_TOKEN #Active la page d'administration
+      - WEBSOCKET_ENABLED=true #Active les websocket
+      - SMTP_HOST=$SMTPHOST
+      - SMTP_FROM=$SMTPFROM
+      - SMTP_PORT=$SMTPPORT
+      - SMTP_SSL=true
+      - SHOW_PASSWORD_HINT=true
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - $MYDIR/bitwarden:/data/:rw
+    deploy:
+      labels:
+        - traefik.enable=true
+        - traefik.web.frontend.rule=Host:bitwarden.$DOMAIN
+        - traefik.web.port=80
+        - traefik.hub.frontend.rule=Host:bitwarden.$DOMAIN;Path:/notifications/hub
+        - traefik.hub.port=3012
+        - traefik.hub.protocol=ws
+        - traefik.docker.network=traefik_public
+    networks:
+        - traefik_public
+
+networks:
+  traefik_public:
+    external: true
