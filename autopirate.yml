@@ -5,6 +5,7 @@
 ##
 ## This template can be set up in your portainer "App template".
 ## Don't forget to set the following environment variables:
+## - MYDIR => the directory where you store permanent data for your stacks
 ## - PUID => user id that can read/write the media files.
 ## - PGID => group id that can read/write the media files.
 ## - DOMAIN => your DNS domainname ( example.com )
@@ -19,8 +20,7 @@ services:
   ombi:
     image: linuxserver/ombi:latest
     volumes:
-     - /var/data/volumes/ombi:/config
-     - /dev/log:/dev/log
+     - $MYDIR/ombi:/config
     networks:
      - traefik_public
      - internal
@@ -38,7 +38,7 @@ services:
   sonarr:
     image: lsiodev/sonarr-preview:latest
     volumes:
-     - /var/data/volumes/sonarr:/config
+     - $MYDIR/sonarr:/config
      - /dev/log:/dev/log
      - /media/gmedia/DlTmp:/downloads
      - /media/gmedia/DlTmp/:/nzbget
@@ -62,7 +62,7 @@ services:
         - traefik.docker.network=traefik_public
         - traefik.port=4180
     volumes:
-      - /var/data/volumes/authenticated-emails.txt:/authenticated-emails.txt
+      - $MYDIR/authenticated-emails.txt:/authenticated-emails.txt
     command: |
       -cookie-secure=false
       -upstream=http://sonarr:8989
@@ -79,8 +79,7 @@ services:
   radarr:
     image: linuxserver/radarr:latest
     volumes:
-     - /var/data/volumes/radarr:/config
-     - /dev/log:/dev/log
+     - $MYDIR/radarr:/config
      - /media/gmedia/DlTmp:/downloads
      - /media/gmedia/DlTmp/:/nzbget
      - /media/gmedia/DlTmp/Films/:/data/Films
@@ -103,7 +102,7 @@ services:
         - traefik.docker.network=traefik_public
         - traefik.port=4180
     volumes:
-      - /var/data/volumes/authenticated-emails.txt:/authenticated-emails.txt
+      - $MYDIR/authenticated-emails.txt:/authenticated-emails.txt
     command: |
       -cookie-secure=false
       -upstream=http://radarr:7878
@@ -120,8 +119,7 @@ services:
   bazarr:
     image: linuxserver/bazarr:latest
     volumes:
-     - /var/data/volumes/bazarr:/config
-     - /dev/log:/dev/log
+     - $MYDIR/bazarr:/config
      - /media/gmedia/Series/:/tv
      - /media/gmedia/Films/:/movies
     networks:
@@ -142,7 +140,7 @@ services:
         - traefik.docker.network=traefik_public
         - traefik.port=4180
     volumes:
-      - /var/data/volumes/authenticated-emails.txt:/authenticated-emails.txt
+      - $MYDIR/authenticated-emails.txt:/authenticated-emails.txt
     command: |
       -cookie-secure=false
       -upstream=http://bazarr:6767
@@ -159,8 +157,7 @@ services:
   jackett:
     image: linuxserver/jackett:latest
     volumes:
-     - /var/data/volumes/jackett:/config
-     - /dev/log:/dev/log
+     - $MYDIR/jackett:/config
      - /media/gmedia/DlTmp/blackhole/:/downloads
     networks:
      - internal
@@ -180,7 +177,7 @@ services:
         - traefik.docker.network=traefik_public
         - traefik.port=4180
     volumes:
-      - /var/data/volumes/authenticated-emails.txt:/authenticated-emails.txt
+      - $MYDIR/authenticated-emails.txt:/authenticated-emails.txt
     command: |
       -cookie-secure=false
       -upstream=http://jackett:9117
@@ -197,8 +194,7 @@ services:
   nzbget:
     image: linuxserver/nzbget:latest
     volumes:
-     - /var/data/volumes/nzbget:/config
-     - /dev/log:/dev/log
+     - $MYDIR/nzbget:/config
      - /media/local/DlTmp/:/downloads
     networks:
      - internal
@@ -218,7 +214,7 @@ services:
         - traefik.docker.network=traefik_public
         - traefik.port=4180
     volumes:
-      - /var/data/volumes/authenticated-emails.txt:/authenticated-emails.txt
+      - $MYDIR/authenticated-emails.txt:/authenticated-emails.txt
     command: |
       -cookie-secure=false
       -upstream=http://nzbget:6789
@@ -235,8 +231,7 @@ services:
   nzbhydra:
     image: linuxserver/hydra2:latest
     volumes:
-     - /var/data/volumes/nzbhydra:/config
-     - /dev/log:/dev/log
+     - $MYDIR/nzbhydra:/config
      - /media/gmedia/DlTmp/nzb:/downloads
     networks:
      - internal
@@ -256,7 +251,7 @@ services:
         - traefik.docker.network=traefik_public
         - traefik.port=4180
     volumes:
-      - /var/data/volumes/authenticated-emails.txt:/authenticated-emails.txt
+      - $MYDIR/authenticated-emails.txt:/authenticated-emails.txt
     command: |
       -cookie-secure=false
       -upstream=http://nzbhydra:5076
@@ -273,8 +268,7 @@ services:
   rtorrent:
     image: linuxserver/rutorrent:latest
     volumes:
-     - /var/data/volumes/rtorrent:/config
-     - /dev/log:/dev/log
+     - $MYDIR/rtorrent:/config
      - /media/local/DlTmp/:/downloads
     networks:
      - internal
@@ -297,7 +291,7 @@ services:
         - traefik.docker.network=traefik_public
         - traefik.port=4180
     volumes:
-      - /var/data/volumes/authenticated-emails.txt:/authenticated-emails.txt
+      - $MYDIR/authenticated-emails.txt:/authenticated-emails.txt
     command: |
       -cookie-secure=false
       -upstream=http://rtorrent:80
@@ -319,13 +313,10 @@ services:
      - PGID=$PGID
      - TZ=Europe/Paris
     volumes:
-#     - /var/data/volumes/lazylibrarian:/config
-     - /var/data/volumes/lazylibrarian-thraxis:/config
-#     - /media/gmedia/Books:/books
-     - /var/data/volumes/Calibre-lib:/books
+     - $MYDIR/lazylibrarian-thraxis:/config
+     - $MYDIR/Calibre-lib:/books
      - /media/local/DlTmp/:/downloads
      - /media/gmedia/DlTmp/BooksImport:/autoimport
-#     - /media/Books:/calibreFolder
     networks:
      - internal
 
@@ -340,7 +331,7 @@ services:
         - traefik.docker.network=traefik_public
         - traefik.port=4180
     volumes:
-      - /var/data/volumes/authenticated-emails.txt:/authenticated-emails.txt
+      - $MYDIR/authenticated-emails.txt:/authenticated-emails.txt
     command: |
       -cookie-secure=false
       -upstream=http://lazylibrarian:5299
@@ -357,8 +348,8 @@ services:
   calibre-web:
     image: technosoft2000/calibre-web
     volumes:
-     - /var/data/volumes/Calibre-lib:/books
-     - /var/data/volumes/calibre-web:/calibre-web/config
+     - $MYDIR/Calibre-lib:/books
+     - $MYDIR/calibre-web:/calibre-web/config
     environment:
      - PUID=1000
      - PGID=1000
@@ -382,7 +373,7 @@ services:
   calibre-server:
     image: cgspeck/docker-rdp-calibre
     volumes:
-     - /var/data/volumes/Calibre-lib:/config
+     - $MYDIR/Calibre-lib:/config
      - /media/gmedia/DlTmp/BooksImport:/autoimport
     ports:
      - 18080:8080
@@ -409,7 +400,7 @@ services:
         - traefik.docker.network=traefik_public
         - traefik.port=4180
     volumes:
-      - /var/data/volumes/authenticated-emails.txt:/authenticated-emails.txt
+      - $MYDIR/authenticated-emails.txt:/authenticated-emails.txt
     command: |
       -cookie-secure=false
       -upstream=http://calibre-server:8080
