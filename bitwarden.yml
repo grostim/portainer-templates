@@ -1,23 +1,9 @@
-## This docker-compose file is designed to be used as a template in portainer.
-## It is widely (completely) inspired from the funkypenguin's cookbook.
-## Don't miss his webpage: https://geek-cookbook.funkypenguin.co.nz
-##
-##
-## This template can be set up in your portainer "App template".
-## Don't forget to set the following environment variables:
-## - DOMAIN => your DNS domainname ( example.com )
-## - MYDIR => the directory where you store permanent data for your stacks
-## - ADMIN_TOKEN => A long random string that is used as a password to secure admin access
-## - SMTPHOST => your smtp server
-## - SMTPFROM => the sender mail address
-## - SMTPPORT => your smtp server port
-
 version: "3"
 services:
   bitwarden:
     image: mprasil/bitwarden
     environment:
-      - DOMAIN=https://bitwarden.$DOMAIN #Définition du domaine requise pour U2F
+      - DOMAIN=https://bitwarden.$DOMAIN:443 #Définition du domaine requise pour U2F
       - SIGNUPS_ALLOWED=false #Desactive la possibilité de s'inscrire
       - INVITATIONS_ALLOWED=true #Autorise la possibilité d'inviter qqun
       - ADMIN_TOKEN=$ADMIN_TOKEN #Active la page d'administration
