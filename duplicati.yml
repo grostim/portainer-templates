@@ -6,7 +6,6 @@
 ## This template can be set up in your portainer "App template".
 ## Don't forget to set the following environment variables:
 ## - DOMAIN => your DNS domainname ( example.com )
-## - MYDIR => the directory where you store permanent data for your stacks
 ## - OAUTH2_PROXY_CLIENT_ID => please see https://github.com/bitly/oauth2_proxy
 ## - OAUTH2_PROXY_CLIENT_SECRET => please see https://github.com/bitly/oauth2_proxy
 ## - OAUTH2_PROXY_COOKIE_SECRET => Some random long string
@@ -17,8 +16,8 @@ services:
   duplicati:
     image: linuxserver/duplicati:latest
     volumes:
-     - $MYDIR/duplicati:/config
-     - $MYDIR/duplicatibackup:/backups
+     - /var/data/volumes/duplicati:/config
+     - /var/data/volumes/duplicatibackup:/backups
      - /:/source:ro
     deploy:
     networks:
@@ -38,7 +37,7 @@ services:
         - traefik.docker.network=traefik_public
         - traefik.port=4180
     volumes:
-      - $MYDIR/authenticated-emails.txt:/authenticated-emails.txt
+      - /var/data/volumes/authenticated-emails.txt:/authenticated-emails.txt
     command: |
       -cookie-secure=false
       -upstream=http://duplicati:8200
