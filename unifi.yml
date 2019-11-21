@@ -7,7 +7,6 @@
 ## Don't forget to set the following environment variables:
 ## - PUID => user id that can read/write the media files.
 ## - PGID => group id that can read/write the media files.
-## - MYDIR => the directory where you store permanent data for your stacks
 ## - DOMAIN => your DNS domainname ( example.com )
 
 version: "3.0"
@@ -16,7 +15,7 @@ services:
   unifi:
     image: linuxserver/unifi-controller:latest
     volumes:
-      - $MYDIR/unifi:/config
+      - /var/data/volumes/unifi:/config
     deploy:
       labels:
         - traefik.tags=frontend
@@ -51,6 +50,8 @@ services:
       - PGID=$PGID
       - PUID=$PUID
       - TZ=Europe/Paris
+    logging:
+      driver: json-file
 
 networks:
   traefik_public:
