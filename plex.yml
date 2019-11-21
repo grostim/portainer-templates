@@ -7,7 +7,6 @@
 ## Don't forget to set the following environment variables:
 ## - PUID => user id that can read/write the media files.
 ## - PGID => group id that can read/write the media files.
-## - MYDIR => the directory where you store permanent data for your stacks
 ## - DOMAIN => your DNS domainname ( example.com )
 ## - OAUTH2_PROXY_CLIENT_ID => please see https://github.com/bitly/oauth2_proxy
 ## - OAUTH2_PROXY_CLIENT_SECRET => please see https://github.com/bitly/oauth2_proxy
@@ -19,7 +18,7 @@ services:
   plex:
     image: linuxserver/plex
     volumes:
-      - $MYDIR/plex:/config
+      - /var/data/volumes/plex:/config
       - /media/gmedia:/media
       - /media/gmedia:/data
       - /media/gmedia:/media/GSuiteCrypt
@@ -43,7 +42,7 @@ services:
       - 32413:32413/udp
       - 32414:32414/udp
     environment:
-      - VERSION = latest
+      - VERSION=latest
       - EDGE=1
       - PUID=$PUID
       - PGID=$PGID
@@ -53,9 +52,14 @@ services:
   tautulli:
     image: "linuxserver/tautulli:latest"
     volumes:
-      - $MEDIA/tautulli:/config
+      - /var/data/volumes/tautulli:/config
     networks:
       - internal
+    environment:
+      - EDGE=1
+      - PUID=$PUID
+      - PGID=$PGID
+      - TZ=Europe/Paris
       
   tautulli-proxy:
     image: a5huynh/oauth2_proxy
@@ -68,7 +72,7 @@ services:
         - traefik.docker.network=traefik_public
         - traefik.port=4180
     volumes:
-      - $MEDIA/authenticated-emails.txt:/authenticated-emails.txt
+      - /var/data/volumes/authenticated-emails.txt:/authenticated-emails.txt
     command: |
       -cookie-secure=false
       -upstream=http://tautulli:8181
