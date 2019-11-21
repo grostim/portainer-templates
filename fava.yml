@@ -1,0 +1,61 @@
+## This docker-compose file is designed to be used as a template in portainer.
+##
+## This template can be set up in your portainer "App template".
+## Don't forget to set the following environment variables:
+## - DOMAIN => your DNS domainname ( example.com )
+## - OAUTH2_PROXY_CLIENT_ID => please see https://github.com/bitly/oauth2_proxy
+## - OAUTH2_PROXY_CLIENT_SECRET => please see https://github.com/bitly/oauth2_proxy
+## - OAUTH2_PROXY_COOKIE_SECRET => Some random long string
+
+version: "3.0"
+
+services:
+  fava:
+    image: grostim/fava-docker:latest
+    volumes:
+      - /var/data/volumes/fava:/myData
+      - /var/data/volumes/fava/cron.daily:/etc/cron.daily/fava
+      - /home/sorg/.ssh:/root/.ssh
+      - /home/sorg/.gitconfig:/root/.gitconfig
+    networks:
+      - internal
+    environment:
+      - BEANCOUNT_INPUT_FILE=/myData/Famille.beancount
+      - ALPHAVANTAGE_API_KEY=3R64QPLWUPJDNA3Y
+      - QUANDL_API_KEY=7XmfgESujw6yS7kuGsC2
+      - IEX_TOKEN=pk_61918976990b4812a9ae8ec2096ae78e
+    deploy:
+    
+  fava-proxy:
+    image: a5huynh/oauth2_proxy
+    networks:
+      - internal
+      - traefik_public
+    deploy:
+      labels:
+        - traefik.frontend.rule=Host:fava.$DOMAIN
+        - traefik.docker.network=traefik_public
+        - traefik.port=4180
+    volumes:
+      - /var/data/volumes/authenticated-emails.txt:/authenticated-emails.txt
+    command: |
+      -cookie-secure=false
+      -upstream=http://fava:5000
+      -redirect-url=https://fava.$DOMAIN
+      -http-address=http://0.0.0.0:4180
+      -email-domain=$DOMAIN
+      -provider=google
+      -authenticated-emails-file=/authenticated-emails.txt
+    environment:
+      - OAUTH2_PROXY_CLIENT_ID=$OAUTH2_PROXY_CLIENT_ID
+      - OAUTH2_PROXY_CLIENT_SECRET=$OAUTH2_PROXY_CLIENT_SECRET
+      - OAUTH2_PROXY_COOKIE_SECRET=$OAUTH2_PROXY_COOKIE_SECRET
+
+networks:
+  traefik_public:
+    external: true
+  internal:
+    driver: overlay
+    ipam:
+      config:
+        - subnet: 172.16.2.0/24
