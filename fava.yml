@@ -12,20 +12,23 @@ version: "3.0"
 services:
   fava:
     image: grostim/fava-docker:latest
+#    image: grostim/fava-docker:Log-request
     volumes:
-      - /var/data/volumes/fava:/myData
-      - /var/data/volumes/fava/cron.daily:/etc/cron.daily/fava
-      - /home/sorg/.ssh:/root/.ssh
-      - /home/sorg/.gitconfig:/root/.gitconfig
+      - $MYDIR/fava:/myData
+      - $MYDIR/fava/cron.daily:/etc/cron.daily/fava
+      - $MYDIR/.ssh:/root/.ssh
+      - $MYDIR/.gitconfig:/root/.gitconfig
     networks:
       - internal
     environment:
       - BEANCOUNT_INPUT_FILE=/myData/Famille.beancount
-      - ALPHAVANTAGE_API_KEY=3R64QPLWUPJDNA3Y
-      - QUANDL_API_KEY=7XmfgESujw6yS7kuGsC2
-      - IEX_TOKEN=pk_61918976990b4812a9ae8ec2096ae78e
+      - FAVA_HOST="0.0.0.0"
+      - FAVA_DEBUG=True
+      - ALPHAVANTAGE_API_KEY=$ALPHAVANTAGE_API_KEY
+      - QUANDL_API_KEY=$QUANDL_API_KEY
+      - IEX_TOKEN=$IEX_TOKEN
     deploy:
-    
+
   fava-proxy:
     image: a5huynh/oauth2_proxy
     networks:
@@ -37,7 +40,7 @@ services:
         - traefik.docker.network=traefik_public
         - traefik.port=4180
     volumes:
-      - /var/data/volumes/authenticated-emails.txt:/authenticated-emails.txt
+      - $MYDIR/authenticated-emails.txt:/authenticated-emails.txt
     command: |
       -cookie-secure=false
       -upstream=http://fava:5000
