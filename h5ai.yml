@@ -9,6 +9,7 @@
 ## - OAUTH2_PROXY_CLIENT_ID => please see https://github.com/bitly/oauth2_proxy
 ## - OAUTH2_PROXY_CLIENT_SECRET => please see https://github.com/bitly/oauth2_proxy
 ## - OAUTH2_PROXY_COOKIE_SECRET => Some random long string
+## - MYDIR => your custom storage directory
 
 version: "3.0"
 
@@ -32,7 +33,7 @@ services:
         - traefik.docker.network=traefik_public
         - traefik.port=4180
     volumes:
-      - /var/data/volumes/authenticated-emails.txt:/authenticated-emails.txt
+      - $MYDIR/authenticated-emails-h5ai.txt:/authenticated-emails.txt
     command: |
       -cookie-secure=false
       -upstream=http://h5ai:80
